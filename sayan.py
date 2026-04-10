@@ -11,7 +11,7 @@ def generate_m3u():
     print(f"[*] Fetching channels from API: {url}...")
     
     try:
-        response = requests.get(url, timeout=10)
+        response = requests.get(url, timeout=20)
         response.raise_for_status()
         channels = response.json()
         print(f"[+] Successfully fetched {len(channels)} channels.")
@@ -47,8 +47,6 @@ def generate_m3u():
                 
                 # Construct stream URL with HTTP headers (Kodi style)
                 stream_url = mpd
-                # It seems some links need headers attached like |User-Agent=...&Referer=...
-                # Note: some players use |Header=Value while others (like TiviMate) might support it via standard M3U
                 headers = []
                 if user_agent and user_agent != "null":
                     headers.append(f"User-Agent={user_agent}")
@@ -64,6 +62,8 @@ def generate_m3u():
         
     except Exception as e:
         print(f"[-] Error: {e}")
+        # Optionally exit with 1 to fail the workflow if the fetch fails
+        # exit(1) 
 
 if __name__ == "__main__":
     generate_m3u()
